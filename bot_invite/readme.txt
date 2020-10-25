@@ -1,0 +1,1 @@
+httpsdiscord.comapioauth2authorizeclient_id=353328753369153543&permissions=8&scope=bot
