@@ -23,8 +23,7 @@ const NO_EMOTE = 'react_no';
 const NO_EMOTE_ID = 776208372340490240;
 const YES_EMOTE = 'react_yes';
 const YES_EMOTE_ID = 776208323523510283;
-const BOT_REACT_STARTER = '<@&775556217015500812>'; // filter ID: 775556217015500812 RED (fake role: 775555648753893397)
-
+const BOT_REACT_STARTER = '<@&607515236928323587>'; // filter ID: 607515236928323587      fake role: 775555648753893397
 // This definitely needs reworked if this bot is to be used across servers.
 // Otherwise, these are arrays containing information about users' reactions to signup events.
 var SIGNUP_MSG_ARRAY = [999,999,999,999,999,999,999,999];
@@ -220,7 +219,7 @@ function sendMainHelpMsg(message){
 			sprintf('%-20s %s','admin_gdelete:', 'Delete some loser, who no longer belongs here, from the database.\n') +
 			sprintf('%-20s %s','delete:','Remove yourself and leave me as if I never even mattered. :(\n') +
 			sprintf('%-20s %s','info:','Look up various bits of information about the guild.\n') +
-			sprintf('%-20s %s','react_to:','Start a new event in your signup channel for guild members to react to.\n\n' +
+			sprintf('%-20s %s','react_to:','Start a new event in your signup channel for guild members to react to.\n\n') +
 			sprintf('%s','Specify a User either by their Character or Family name, or by tagging their discord handle.\n') +
 			sprintf('%s',"Specify a Database: either 'main' or 'castle'.\n\n") +
 			sprintf('%s','To get help, use: gtbot help [command]') +
@@ -359,13 +358,13 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
 bot.on('messageReactionRemove', async (reaction, user) => {
 	let reactedMessage = reaction.message, emojiUsed = reaction.emoji;
-	if (SIGNUP_MSG_ARRAY.includes(reactedMessage.id) && emojiUsed.name == YES_EMOTE){
+	if (SIGNUP_MSG_ARRAY.includes(reactedMessage.id) && emojiUsed.name == YES_EMOTE && !user.bot){
 		SIGNUP_YES_ARRAY.forEach(item =>{
 			if (item.Event == SIGNUP_MSG_ARRAY.indexOf(reactedMessage.id) && item.User == user.id){
 				SIGNUP_YES_ARRAY.delete(item);
 			}
 		});
-	} else if (SIGNUP_MSG_ARRAY.includes(reactedMessage.id) && emojiUsed.name == NO_EMOTE){
+	} else if (SIGNUP_MSG_ARRAY.includes(reactedMessage.id) && emojiUsed.name == NO_EMOTE && !user.bot){
 		SIGNUP_NO_ARRAY.forEach(item =>{
 			if (item.Event == SIGNUP_MSG_ARRAY.indexOf(reactedMessage.id) && item.User == user.id){
 				SIGNUP_NO_ARRAY.delete(item);
@@ -385,6 +384,7 @@ bot.on('message', async message =>{
 		
 	// Don't want an infinite loop. Check if the first word of the bot's message is "@Filter". Bot messages to prompt users to sign up for nw/siege/practice begin by @ing the guild.
 	// If it is an @Filter message, we will begin handling reactions for that message.
+
 	if ((message.content.split(' ')[0] == BOT_REACT_STARTER) && message.author.bot && message.channel.id==WARSIGNUP_ID){
 		if (message.content.includes(SIGNUP_EVENTS_STR.NW1)){
 			SIGNUP_MSG_ARRAY[SIGNUP_EVENTS.NW1] = message.id;
@@ -405,20 +405,25 @@ bot.on('message', async message =>{
 		} else if (message.content.includes(SIGNUP_EVENTS_STR.PRACTICE2)){
 			SIGNUP_MSG_ARRAY[SIGNUP_EVENTS.PRACTICE2] = message.id;
 		}
+		message.react(message.guild.emojis.cache.find(e => e.name === YES_EMOTE));
+		message.react(message.guild.emojis.cache.find(e => e.name === NO_EMOTE));
 		return;
 	}
-	// 1/10 chance to reply to Gawi wherever he types telling him to give me higher pay lol.
-	var gawiDice = Math.floor(Math.random()*50);
+	
+	// 1/50 chance to reply to Gawi wherever he types telling him to give me higher pay lol.
+	/*var gawiDice = Math.floor(Math.random()*5);
 	var gawiDice2 = Math.floor(Math.random()*3);
-	if (gawiDice == 49 && !message.author.bot && message.author.id == 152976563594330112 && !message.channel.name!='unmuted-announcements' && !message.channel.name!='noticeboard' && !message.channel.name!='war-signups'){
+	if (gawiDice == 4 && !message.author.bot && message.author.id == 152976563594330112 && !message.channel.name!='unmuted-announcements' && !message.channel.name!='noticeboard' && !message.channel.name!='war-signups'){
 		if (gawiDice2 == 0) {
+			message.reply('Gawi-senpai. Let Krosa-sama build our fort! *uwu* (P.S. He asked me to do this)');
 			message.reply('Gawi! Smo-senpai has worked SO hard to improve me and add cool new features. You should give him higher pay (especially when we own a castle)! *Muahaha*');
 		} else if (gawiDice2 == 1){
 			message.reply('All those long hours writing and fixing my code, unable grind for money. Would Gawi-senpai consider throwing a little extra bacon Smo\'s way?');
 		} else if (gawiDice2 == 2) {
 			message.reply('Gawi-senpai! Thanks to Smo\'s hard work, I\'m able to do more than ever! Maybe think about sliding a few extra Ts his way, if ya catch my drift. *wink*');
 		}
-	}
+	}*/
+	
 	// If user didn't type gtbot, or if the bot itself has sent a message, immediately return without further processing.
 	if (!(message.content.split(' ')[0] == prefix) || message.author.bot) return;
 	// If the user DID use gtbot, but they aren't typing in the gtbot or bot-test channels (and against it's not the bot typing) then tell them they must use it in the appropriate channel and return out.
@@ -485,35 +490,53 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'send_feet'
 		case 'send_feet':
-			var randHi = Math.floor(Math.random() * 30);
+			var randHi = Math.floor(Math.random() * 50);
 			var feetpicture = 'M:\\GearTracerBot\\Private\\fine.jpg';
 			if (message.author.id == 300130702089912322){
-				if (randHi < 9){
+				if (randHi < 15){
 					message.reply(`${boxtick}Bad Fluffy. Bad! No feet for you!${boxtick}`);
 					break;
-				} else if (randHi >= 9 && randHi < 19) {
+				} else if (randHi >= 15 && randHi < 31) {
 					message.reply(`${boxtick}Fluffy...No.${boxtick}`);
 					break;
-				} else if (randHi >= 19 && randHi < 28){
+				} else if (randHi >= 31 && randHi < 48){
 					message.reply(`${boxtick}Hmmm....I don't know. Maybe some other time.${boxtick}`);
 					break;
-				} else if (randHi >= 28) {				
-					message.reply(`${boxtick}*sigh*. Fine. Here.${boxtick}`, {files: [`${feetpicture}`]});
+				} else if (randHi >= 49) {				
+					message.reply(`${boxtick}*sigh*. Fine, Fluffy. Check your DMs.${boxtick}`);
+					message.author.send(`Please don't share this with anyone. It's embarrassing.`, {files: [`${feetpicture}`]});
 					break;
 				}	
 				break;
-			}			
-			if (randHi < 9){
+			} else if (message.author.id == 142889954987606016) {
+				if (randHi < 15){
+					message.reply(`${boxtick}Ha! In your dreams, Bubba.${boxtick}`);
+					break;
+				} else if (randHi >= 15 && randHi < 31) {
+					message.reply(`${boxtick}Okay here you go Bubba! ..... not.${boxtick}`);
+					break;
+				} else if (randHi >= 31 && randHi < 48){
+					message.reply(`${boxtick}Yeah that will never happen. Not with the way you treat me.${boxtick}`);
+					break;
+				} else if (randHi >= 49) {				
+					message.reply(`${boxtick}If it'll get you off my back, finally, then here. Check your stupid DMs.${boxtick}`);
+					message.author.send(`Don't you dare share this with anyone...`, {files: [`${feetpicture}`]});
+					break;
+				}	
+				break;
+			}
+			if (randHi < 15){
 				message.reply(`${boxtick}I don't have feet. I'm a robot ${message.author.tag}-sama.${boxtick}`);
 				break;
-			} else if (randHi >= 9 && randHi < 19) {
+			} else if (randHi >= 15 && randHi < 31) {
 				message.reply(`${boxtick}Hahahahahaaha! No.${boxtick}`);
 				break;
-			} else if (randHi >= 19 && randHi < 28){
+			} else if (randHi >= 31 && randHi < 48){
 				message.reply(`${boxtick}Take your fetish elsewhere. I will not subject myself to your lewd fantasies.${boxtick}`);
 				break;
-			} else if (randHi >= 28) {				
-				message.reply(`${boxtick}*sigh*. Fine. Here.${boxtick}`, {files: [`${feetpicture}`]});
+			} else if (randHi >= 49) {				
+				message.reply(`${boxtick}I've sent it to your DMs. Now would you, please, give it a rest?${boxtick}`);
+				message.author.send(`Please don't share this with anyone. Keep it between us, okay?`, {files: [`${feetpicture}`]});
 				break;
 			}	
 		break;
@@ -1717,33 +1740,39 @@ bot.on('message', async message =>{
 						} else {
 							isMain = '';
 						}
+						var chRef = bot.channels.cache.get(WARSIGNUP_ID_S);
+						var eventIdx = SIGNUP_EVENTS[eventType.toUpperCase()];
+						if (SIGNUP_MSG_ARRAY[eventIdx] != 999){
+							message.reply(`${boxtick}This is event is already opened. Use hard_close ${boxtick}`);
+							return;
+						}
 						switch (eventType.toLowerCase()){
 							case 'nw1':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW1} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW1} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
 								break;
 							case 'nw2':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW2} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW2} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
 								break;
 							case 'nw3':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW3} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW3} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
 								break;
 							case 'nw4':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW4} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW4} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
 								break;
 							case 'nw5':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW5} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW5} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
 								break;
 							case 'nw6':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW6} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW6} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
 								break;
 							case 'siege':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${SIGNUP_EVENTS_STR.SIEGE} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Siege_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${SIGNUP_EVENTS_STR.SIEGE} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Siege_Signups.png']});
 								break;
 							case 'practice1':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE1} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Practice_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE1} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Practice_Signups.png']});
 								break;
 							case 'practice2':
-								message.channel.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE2} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Practice_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE2} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Practice_Signups.png']});
 								break;
 							default:
 								var errorReply = `${boxtick}` + 
@@ -1776,25 +1805,32 @@ bot.on('message', async message =>{
 						
 						// If the event was opened, let's check if there are even any reactions.
 						// If there are reactions, we'll figure out which family/char has reacted based on the ID used to react.
+						console.log(SIGNUP_YES_ARRAY);
 						if (SIGNUP_YES_ARRAY.size > 0){
 							for (let value of SIGNUP_YES_ARRAY){
 								if (value.Event == eventIdx){
-									var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
-									reactionNames[yesCounter] = [id.get('Family'), id.get('Character')];							
-									yesCounter++;
+									try {
+										var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
+										reactionNames[yesCounter] = [id.get('Family'), id.get('Character')];							
+										yesCounter++;
+									} catch (er) {
+									}	
 								}
 							}
 						}
 						if (SIGNUP_NO_ARRAY.size > 0) {
 							for (let value of SIGNUP_NO_ARRAY){
 								if (value.Event == eventIdx){
-									var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
-									if (reactionNames[noCounter]==null){
-										reactionNames[noCounter] = [' ', ' ', ' ', id.get('Family'), id.get('Character')];	
-									} else {
-										reactionNames[noCounter] = [reactionNames[noCounter][0], reactionNames[noCounter][1], ' ', id.get('Family'), id.get('Character')];				
-									}									
-									noCounter++;
+									try {
+										var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
+										if (reactionNames[noCounter]==null){
+											reactionNames[noCounter] = [' ', ' ', ' ', id.get('Family'), id.get('Character')];	
+										} else {
+											reactionNames[noCounter] = [reactionNames[noCounter][0], reactionNames[noCounter][1], ' ', id.get('Family'), id.get('Character')];				
+										}									
+										noCounter++;
+									} catch (er) {
+									}										
 								}
 							}
 						}
@@ -1827,6 +1863,7 @@ bot.on('message', async message =>{
 					case 'hardclose':
 						var eventType = args.shift() // nw1, nw2, nw..., siege, practice		
 						var eventIdx = SIGNUP_EVENTS[eventType.toUpperCase()];
+						console.log(eventIdx);
 						var reactionNames = [];
 						var yesCounter = 0;
 						var noCounter = 0;
@@ -1840,24 +1877,30 @@ bot.on('message', async message =>{
 						if (SIGNUP_YES_ARRAY.size > 0){
 							for (let value of SIGNUP_YES_ARRAY){
 								if (value.Event == eventIdx){
-									var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
-									reactionNames[yesCounter] = [id.get('Family'), id.get('Character')];							
-									SIGNUP_YES_ARRAY.delete(value);
-									yesCounter++;
+									try {
+										var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
+										reactionNames[yesCounter] = [id.get('Family'), id.get('Character')];							
+										SIGNUP_YES_ARRAY.delete(value);
+										yesCounter++;
+									} catch (er) {
+									}		
 								}
 							}
 						}
 						if (SIGNUP_NO_ARRAY.size > 0) {
 							for (let value of SIGNUP_NO_ARRAY){
 								if (value.Event == eventIdx){
-									var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
-									if (reactionNames[noCounter]==null){
-										reactionNames[noCounter] = [' ', ' ', ' ', id.get('Family'), id.get('Character')];	
-									} else {
-										reactionNames[noCounter] = [reactionNames[noCounter][0], reactionNames[noCounter][1], ' ', id.get('Family'), id.get('Character')];				
-									}						
-									SIGNUP_NO_ARRAY.delete(value);
-									noCounter++;
+									try {
+										var id = await Member.findOne({ where: {UserID: value.User, GuildID: msgGuildID} });
+										if (reactionNames[noCounter]==null){
+											reactionNames[noCounter] = [' ', ' ', ' ', id.get('Family'), id.get('Character')];	
+										} else {
+											reactionNames[noCounter] = [reactionNames[noCounter][0], reactionNames[noCounter][1], ' ', id.get('Family'), id.get('Character')];				
+										}						
+										SIGNUP_NO_ARRAY.delete(value);
+										noCounter++;
+									} catch (er) {
+									}		
 								}
 							}
 						}
@@ -1898,7 +1941,6 @@ bot.on('message', async message =>{
 						var splitLgth = splitMsg.length;
 						var channelRef = bot.channels.cache.get(splitMsg[splitLgth-2]);
 						var msgRef = await channelRef.messages.fetch(splitMsg[splitLgth-1]); // the message data structure to be relinked
-
 						// Add message id back into the message array to keep track of it.
 						switch (eventType.toLowerCase()){
 							case 'nw1':
@@ -1953,18 +1995,19 @@ bot.on('message', async message =>{
 						};
 						// get the list of yes/no reactors to the old message.
 						var reactIds = await main(msgRef);
-						
+						console.log(reactIds);
+						console.log(reactIds.yes[0].length);
 						// force the 'yes' IDs into the SIGNUP_YES_ARRAY
-						for (var i = 0; i < reactIds.yes.length; i++){
-							var reactor = { Event: SIGNUP_MSG_ARRAY.indexOf(msgRef.id), User: reactIds.yes[i][0] };
+						for (var i = 0; i < reactIds.yes[0].length; i++){
+							var reactor = { Event: SIGNUP_MSG_ARRAY.indexOf(msgRef.id), User: reactIds.yes[0][i] };
 							await SIGNUP_YES_ARRAY.add(reactor);
 						}						
 						// force the 'no' IDs into the SIGNUP_NO_ARRAY
-						for (var i = 0; i < reactIds.no.length; i++){
-							var reactor = { Event: SIGNUP_MSG_ARRAY.indexOf(msgRef.id), User: reactIds.no[i][0] };
+						for (var i = 0; i < reactIds.no[0].length; i++){
+							var reactor = { Event: SIGNUP_MSG_ARRAY.indexOf(msgRef.id), User: reactIds.no[0][i] };
 							await SIGNUP_NO_ARRAY.add(reactor);
 						}
-						message.channel.send(`${boxtick}Event relinked! \n 	${reactIds.yes.length} YES reactions\n and\n 	${reactIds.no.length} NO reactions\naccounted for. \nMembers can continue reacting.${boxtick}`);
+						message.channel.send(`${boxtick}Event relinked! \n 	${reactIds.yes[0].length} YES reactions\n and\n 	${reactIds.no[0].length} NO reactions\naccounted for. \nMembers can continue reacting.${boxtick}`);
 						break;
 					//}
 					//{ case: 'remind'
@@ -2021,12 +2064,14 @@ bot.on('message', async message =>{
 						
 						var allmembers = await dbOpt.findAll({raw: true, where: {GuildID: msgGuildID}}); 
 						var result = allmembers.map((a) => a.UserID).filter( (filter) => filter != reactionNames); // List of all users who have not reacted to specified message
-						//var result = ['135903003478720512']; // THIS IS TO MAKE IT ONLY DM MYSELF FOR TESTING
+						var result = ['135903003478720512']; // THIS IS TO MAKE IT ONLY DM MYSELF FOR TESTING
+						/*
 						result.forEach( async (person) => {
 							var usr = message.guild.members.cache.get(person);				
 							var msgUrl = 'https://discordapp.com/channels/607513428394770448/'+WARSIGNUP_ID_S+'/'+SIGNUP_MSG_ARRAY[SIGNUP_EVENTS[eventType.toUpperCase()]];
 							usr.send('GTBOT here! Please react to the following event: ' +SIGNUP_EVENTS_STR[eventType.toUpperCase()]+' >> '+ msgUrl);
 						});
+						*/
 						break;
 					//}
 				} // close admin/god perms
@@ -2146,13 +2191,14 @@ bot.on('message', async message =>{
 					"		- Usage: gtbot react_to hardclose [event]\n\n"+
 					"  * relink    :: If the bot crashes or is taken down, you can relink an open event with this command and continue tracking reactions.\n"+
 					"		- Usage: gtbot react_to relink [event_url]\n"+
-					"		- event_url can be retrieved by right-clicking the event in your signup channel, and selecting Copy Link\n\n"+
+					"		- event_url can be retrieved by right-clicking the event in your signup channel, and selecting Copy Message Link\n\n"+
 					"  * remind    :: DMs all in the GTBOT who have not reacted in any way to the specified open event.\n"+
 					"		- Usage: gtbot react_to remind [event]\n\n"+
 					"An [event], required by most secondary commands, is any from the following list:\n"+
 					"	- nw1, nw2, nw3, nw4, nw5, nw6, siege, practice1, practice2\n"+
 					"	- nw1 through nw6 correspond to nodewars NA Sunday through Friday."+
 					`${boxtick}`;
+					message.channel.send(dispMsg);
 					break;
 				default:
 					sendMainHelpMsg(message);
