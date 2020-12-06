@@ -591,7 +591,7 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'admin_attach_pic'
 		case 'admin_attach_pic':
-			if (message.member.hasPermission(adminperm)){
+			if (message.member.hasPermission(adminperm)|| message.author.id == GOD_ID){
 				var mem = args.shift();
 				if (mem.includes('@!')){
 					mem = mem.substring(3, mem.length-1);
@@ -709,13 +709,13 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'admin_add'
 		case 'admin_add':			
-			if (message.member.hasPermission(adminperm)){
+			if (message.member.hasPermission(adminperm)|| message.author.id == GOD_ID){
 				var mem = args.shift();
 				if (mem.includes('@!')){
 					mem = mem.substring(3, mem.length-1);
 				}
 			} else {
-				message.channel.send(`{boxtick}Hey! You don\'t have permissions for that command!${boxtick}`);
+				message.channel.send(`${boxtick}Hey! You don\'t have permissions for that command!${boxtick}`);
 			}
 			var memTag = message.guild.members.cache.get(mem).user.tag;
 			if (!memTag){
@@ -759,7 +759,8 @@ bot.on('message', async message =>{
 							UserTag: memTag,
 							GuildID: msgGuildID,
 							DR_PERC: drperc,
-							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, classname)
+							Level: 0,
+							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, 0, classname)
 						});
 						message.reply(`${boxtick}Your new guild member, ${newMember.Character}, of the family ${newMember.Family} was added.\nTreat them well!${boxtick}`);
 					}
@@ -784,7 +785,8 @@ bot.on('message', async message =>{
 							UserTag: memTag,
 							GuildID: msgGuildID,
 							DR_PERC: drperc,
-							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, classname)
+							Level: 0,
+							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, 0, classname)
 						});
 						message.reply(`${boxtick}Your new guild member, ${newDefense.Character}, of the family ${newDefense.Family} was added.\nTreat them well!${boxtick}`);
 					}
@@ -810,7 +812,8 @@ bot.on('message', async message =>{
 							UserTag: memTag,
 							GuildID: msgGuildID,
 							DR_PERC: drperc,
-							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, classname)
+							Level: 0,
+							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, 0, classname)
 						});
 						message.reply(`${boxtick}Your new guild member, ${newMember.Character}, of the family ${newMember.Family} was added.\nTreat them well!${boxtick}`);
 					}
@@ -834,7 +837,8 @@ bot.on('message', async message =>{
 							UserTag: memTag,
 							GuildID: msgGuildID,
 							DR_PERC: drperc,
-							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, classname)
+							Level: 0,
+							DISPLAY: sprintf(`${disptemplate}`, famname, charname, memTag, ap, aap, dp, Math.max(ap, aap) + dp, 0, 0, 0, drperc, 0, classname)
 						});
 						message.reply(`${boxtick}Your new guild member, ${newDefense.Character}, of the family ${newDefense.Family} was added.\nTreat them well!${boxtick}`);
 					}
@@ -1000,7 +1004,7 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'admin_update'
 		case 'admin_update':
-			if (message.member.hasPermission(adminperm)){			
+			if (message.member.hasPermission(adminperm)|| message.author.id == GOD_ID){			
 				var dbSelect = args.shift().toLowerCase();
 				switch (dbSelect) {
 					case 'main':
@@ -1038,7 +1042,7 @@ bot.on('message', async message =>{
 				if (updateData > 0) {
 					var user = await dbOpt.findOne({where: {UserID: id, GuildID: msgGuildID} }); // get the updated user data.
 					// Format the the new DISPLAY string.
-					var disp = sprintf(`${disptemplate}`, user.get('Family'), user.get('Character'), user.get('UserTag'), user.get('AP'), user.get('AAP'), user.get('DP'), user.get('GS'), user.get('ACC'), user.get('EVA'), user.get('DR'), user.get('DR_PERC'), user.get('Class'));
+					var disp = sprintf(`${disptemplate}`, user.get('Family'), user.get('Character'), user.get('UserTag'), user.get('AP'), user.get('AAP'), user.get('DP'), Math.max(user.get('AP'), user.get('AAP')) + user.get('DP'), user.get('ACC'), user.get('EVA'), user.get('DR'), user.get('DR_PERC'), user.get('Level'), user.get('Class'));
 					var updateData = await dbOpt.update({ 
 						DISPLAY: disp},
 						{ where: { UserID: id, GuildID: msgGuildID } 
@@ -1097,7 +1101,7 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'admin_delete'
 		case 'admin_delete':
-			if (message.member.hasPermission(adminperm)){
+			if (message.member.hasPermission(adminperm)|| message.author.id == GOD_ID){
 				var mem = args.shift();
 				if (mem.includes('@!')){
 					mem = mem.substring(3, mem.length-1);
@@ -1334,7 +1338,7 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'export'
 		case 'export':			
-			if (message.member.hasPermission(adminperm)){
+			if (message.member.hasPermission(adminperm)|| message.author.id == GOD_ID){
 				var dbSelect = args.shift();
 				if (dbSelect){
 					dbSelect = dbSelect.toLowerCase();
