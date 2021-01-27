@@ -13,17 +13,23 @@ var csvWriter = require('csv-writer').createArrayCsvWriter;
 // Initialize Discord Bot
 var bot = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
+//==EDIT==
 // God developer ID used for debugging and testing
-const GOD_ID = 135903003478720512;
-const GAWI_ID = 152976563594330112;
-// Constants and structures used for signup reactions
-const WARSIGNUP_ID = 621739027887816705; // bot-test ID: 775534049828798485   war-signup ID: 621739027887816705
-const WARSIGNUP_ID_S = '621739027887816705'; // bot-test ID: 775534049828798485   war-signup ID: 621739027887816705
+const GOD_ID = ;
+// Constants and structures used for signup reactions. Change these based on your server
+const WARSIGNUP_ID = 621739027887816705; 
+const WARSIGNUP_ID_S = '621739027887816705'; 
 const NO_EMOTE = 'react_no';
 const NO_EMOTE_ID = 776208372340490240;
 const YES_EMOTE = 'react_yes';
 const YES_EMOTE_ID = 776208323523510283;
-const BOT_REACT_STARTER = '<@&607515236928323587>'; // filter ID: 607515236928323587      fake role: 775555648753893397
+const BOT_REACT_STARTER = '<@&607515236928323587>'; // filter ID: 607515236928323587   
+const BOT_PATH = 'M:\\GearTracerBot\\'; 
+const NW_SIGNUP_IMG = '.\\Private\\Filter_NodeWar_Signups.png';
+const SIEGE_SIGNUP_IMG = '.\\Private\\Filter_Siege_Signups.png';
+const PRACT_SIGNUP_IMG = '.\\Private\\Filter_Practice_Signups.png';
+//==EDIT==
+
 // This definitely needs reworked if this bot is to be used across servers.
 // Otherwise, these are arrays containing information about users' reactions to signup events.
 var SIGNUP_MSG_ARRAY = [999,999,999,999,999,999,999,999];
@@ -410,19 +416,6 @@ bot.on('message', async message =>{
 		return;
 	}
 	
-	// 1/50 chance to reply to Gawi wherever he types telling him to give me higher pay lol.
-	/*var gawiDice = Math.floor(Math.random()*5);
-	var gawiDice2 = Math.floor(Math.random()*3);
-	if (gawiDice == 4 && !message.author.bot && message.author.id == 152976563594330112 && !message.channel.name!='unmuted-announcements' && !message.channel.name!='noticeboard' && !message.channel.name!='war-signups'){
-		if (gawiDice2 == 0) {
-			message.reply('Gawi-senpai. Let Krosa-sama build our fort! *uwu* (P.S. He asked me to do this)');
-			message.reply('Gawi! Smo-senpai has worked SO hard to improve me and add cool new features. You should give him higher pay (especially when we own a castle)! *Muahaha*');
-		} else if (gawiDice2 == 1){
-			message.reply('All those long hours writing and fixing my code, unable grind for money. Would Gawi-senpai consider throwing a little extra bacon Smo\'s way?');
-		} else if (gawiDice2 == 2) {
-			message.reply('Gawi-senpai! Thanks to Smo\'s hard work, I\'m able to do more than ever! Maybe think about sliding a few extra Ts his way, if ya catch my drift. *wink*');
-		}
-	}*/
 	
 	// If user didn't type gtbot, or if the bot itself has sent a message, immediately return without further processing.
 	if (!(message.content.split(' ')[0] == prefix) || message.author.bot) return;
@@ -438,6 +431,7 @@ bot.on('message', async message =>{
 		//{ case 'GOD_COMMAND'
 		case 'god_command':
 			if (message.author.id == GOD_ID){
+				// code for adding fields to all members after adding new field to database
 				/*
 				var allmembers = await Member.findAll({raw: true, where: {GuildID: msgGuildID}});
 				for (var i = 0; i < allmembers.length; i++){
@@ -463,68 +457,11 @@ bot.on('message', async message =>{
 				*/
 			}
 			break;
-		//}		
-		//{ case 'send_horse'
-		case 'send_horse':
-			var randHi = Math.floor(Math.random() * 5);
-			if (message.author.id == 133737418984521728){
-				var loomiHorse = 'M:\\GearTracerBot\\Private\\horse_loomi.jpeg';
-				message.reply(`${boxtick}Behold! Your majestic steed!${boxtick}`, {files: [`${loomiHorse}`]});
-				break;
-			}
-			
-			if (randHi == 0){
-				var horsepic = 'M:\\GearTracerBot\\Private\\horse1.jpg';
-			} else if (randHi == 1) {
-				var horsepic = 'M:\\GearTracerBot\\Private\\horse2.jpg';
-			} else if (randHi == 2) {
-				var horsepic = 'M:\\GearTracerBot\\Private\\horse3.jpg';
-			} else if (randHi == 3) {
-				var horsepic = 'M:\\GearTracerBot\\Private\\horse4.jpg';
-			} else if (randHi == 4) {
-				var horsepic = 'M:\\GearTracerBot\\Private\\horse5.jpg';
-			}
-			message.reply(`${boxtick}Behold! A horse!${boxtick}`, {files: [`${horsepic}`]});
-			break;
-			
-		//}
+		//}				
 		//{ case 'send_feet'
 		case 'send_feet':
 			var randHi = Math.floor(Math.random() * 50);
-			var feetpicture = 'M:\\GearTracerBot\\Private\\fine.jpg';
-			if (message.author.id == 300130702089912322){
-				if (randHi < 15){
-					message.reply(`${boxtick}Bad Fluffy. Bad! No feet for you!${boxtick}`);
-					break;
-				} else if (randHi >= 15 && randHi < 31) {
-					message.reply(`${boxtick}Fluffy...No.${boxtick}`);
-					break;
-				} else if (randHi >= 31 && randHi < 48){
-					message.reply(`${boxtick}Hmmm....I don't know. Maybe some other time.${boxtick}`);
-					break;
-				} else if (randHi >= 49) {				
-					message.reply(`${boxtick}*sigh*. Fine, Fluffy. Check your DMs.${boxtick}`);
-					message.author.send(`Please don't share this with anyone. It's embarrassing.`, {files: [`${feetpicture}`]});
-					break;
-				}	
-				break;
-			} else if (message.author.id == 142889954987606016) {
-				if (randHi < 15){
-					message.reply(`${boxtick}Ha! In your dreams, Bubba.${boxtick}`);
-					break;
-				} else if (randHi >= 15 && randHi < 31) {
-					message.reply(`${boxtick}Okay here you go Bubba! ..... not.${boxtick}`);
-					break;
-				} else if (randHi >= 31 && randHi < 48){
-					message.reply(`${boxtick}Yeah that will never happen. Not with the way you treat me.${boxtick}`);
-					break;
-				} else if (randHi >= 49) {				
-					message.reply(`${boxtick}If it'll get you off my back, finally, then here. Check your stupid DMs.${boxtick}`);
-					message.author.send(`Don't you dare share this with anyone...`, {files: [`${feetpicture}`]});
-					break;
-				}	
-				break;
-			}
+			var feetpicture = BOT_PATH + 'Private\\fine.jpg';			
 			if (randHi < 15){
 				message.reply(`${boxtick}I don't have feet. I'm a robot ${message.author.tag}-sama.${boxtick}`);
 				break;
@@ -543,10 +480,6 @@ bot.on('message', async message =>{
 		//}
 		//{ case 'send_nudes'
 		case 'send_nudes':
-			if (message.author.id == 268520643220340738){
-				message.channel.send(`<@!330131850116726784> Corey is trying to get nudes from another woman! Help!!!`);
-				break;
-			}
 			var randHi = Math.floor(Math.random() * 3);
 			switch (randHi){
 				case 0:
@@ -562,7 +495,8 @@ bot.on('message', async message =>{
 		break;
 		//}
 		//{ case 'test'
-		case 'test':	
+		case 'test':
+			// random test function. modify code and use as needed to test new features or updates you make. Use god_command to test things if you don't want others to have access to your test code.
 			var htmllink = args.shift();
 			console.log(htmllink);
 		break;
@@ -634,7 +568,7 @@ bot.on('message', async message =>{
 			if (args.length < 1) {		
 				fileName = message.attachments.array()[0].name;
 				extension = fileName.substring(fileName.lastIndexOf('.') + 1); 
-				savefilename = 'M:\\GearTracerBot\\' + `${folder}`+ '\\' + message.author.id + '.' + extension;
+				savefilename = BOT_PATH + `${folder}`+ '\\' + message.author.id + '.' + extension;
 				if (extension == 'png' || extension == 'jpg'){
 					downloadurl(message.attachments.array()[0].url, savefilename);
 					var updateData = await dbOpt.update({ Picture: savefilename }, { where: { UserID: id, GuildID: msgGuildID} });
@@ -646,7 +580,7 @@ bot.on('message', async message =>{
 			} else {
 				fileName = args[0];
 				extension = fileName.substring(fileName.lastIndexOf('.') + 1); 
-				savefilename = 'M:\\GearTracerBot\\' + `${folder}`+ '\\' + message.author.id + '.' + extension;
+				savefilename = BOT_PATH + `${folder}`+ '\\' + message.author.id + '.' + extension;
 				if (extension == 'png' || extension == 'jpg'){
 					downloadurl(args[0], savefilename);
 					var updateData = await dbOpt.update({ Picture: savefilename }, { where: { UserID: id, GuildID: msgGuildID } });
@@ -684,7 +618,7 @@ bot.on('message', async message =>{
 			if (args.length < 1) {		
 				fileName = message.attachments.array()[0].name;
 				extension = fileName.substring(fileName.lastIndexOf('.') + 1); 
-				savefilename = 'M:\\GearTracerBot\\' + `${folder}`+ '\\' + message.author.id + '.' + extension;
+				savefilename = BOT_PATH + `${folder}`+ '\\' + message.author.id + '.' + extension;
 				if (extension == 'png' || extension == 'jpg'){
 					downloadurl(message.attachments.array()[0].url, savefilename);
 					var updateData = await dbOpt.update({ Picture: savefilename }, { where: { UserID: message.author.id, GuildID: msgGuildID } });
@@ -696,7 +630,7 @@ bot.on('message', async message =>{
 			} else {
 				fileName = args[0];
 				extension = fileName.substring(fileName.lastIndexOf('.') + 1); 
-				savefilename = 'M:\\GearTracerBot\\' + `${folder}`+ '\\' + message.author.id + '.' + extension;
+				savefilename = BOT_PATH + `${folder}`+ '\\' + message.author.id + '.' + extension;
 				if (extension == 'png' || extension == 'jpg'){
 					downloadurl(args[0], savefilename);
 					var updateData = await dbOpt.update({ Picture: savefilename }, { where: { UserID: message.author.id, GuildID: msgGuildID } });
@@ -1752,31 +1686,31 @@ bot.on('message', async message =>{
 						}
 						switch (eventType.toLowerCase()){
 							case 'nw1':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW1} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW1} (${day_time} ${month_time})**`, {files: [NW_SIGNUP_IMG]});
 								break;
 							case 'nw2':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW2} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW2} (${day_time} ${month_time})**`, {files: [NW_SIGNUP_IMG]});
 								break;
 							case 'nw3':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW3} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW3} (${day_time} ${month_time})**`, {files: [NW_SIGNUP_IMG]});
 								break;
 							case 'nw4':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW4} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW4} (${day_time} ${month_time})**`, {files: [NW_SIGNUP_IMG]});
 								break;
 							case 'nw5':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW5} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW5} (${day_time} ${month_time})**`, {files: [NW_SIGNUP_IMG]});
 								break;
 							case 'nw6':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW6} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_NodeWar_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.NW6} (${day_time} ${month_time})**`, {files: [NW_SIGNUP_IMG]});
 								break;
 							case 'siege':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${SIGNUP_EVENTS_STR.SIEGE} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Siege_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${SIGNUP_EVENTS_STR.SIEGE} (${day_time} ${month_time})**`, {files: [SIEGE_SIGNUP_IMG]});
 								break;
 							case 'practice1':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE1} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Practice_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE1} (${day_time} ${month_time})**`, {files: [PRACT_SIGNUP_IMG]});
 								break;
 							case 'practice2':
-								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE2} (${day_time} ${month_time})**`, {files: ['.\\Private\\Filter_Practice_Signups.png']});
+								chRef.send(`${BOT_REACT_STARTER} Sign Up For **${isMain} ${SIGNUP_EVENTS_STR.PRACTICE2} (${day_time} ${month_time})**`, {files: [PRACT_SIGNUP_IMG]});
 								break;
 							default:
 								var errorReply = `${boxtick}` + 
@@ -2017,6 +1951,7 @@ bot.on('message', async message =>{
 					//{ case: 'remind'
 					case 'remind':
 						// gtbot react_to Main nw5
+						// This function isn't really working right. Don't use it.
 						var dbSelect = args.shift();
 						if (dbSelect){
 							dbUsed = dbSelect.toLowerCase();
@@ -2068,7 +2003,7 @@ bot.on('message', async message =>{
 						
 						var allmembers = await dbOpt.findAll({raw: true, where: {GuildID: msgGuildID}}); 
 						var result = allmembers.map((a) => a.UserID).filter( (filter) => filter != reactionNames); // List of all users who have not reacted to specified message
-						var result = ['135903003478720512']; // THIS IS TO MAKE IT ONLY DM MYSELF FOR TESTING
+						//var result = ['1234']; // THIS IS TO MAKE IT ONLY DM MYSELF FOR TESTING
 						/*
 						result.forEach( async (person) => {
 							var usr = message.guild.members.cache.get(person);				
